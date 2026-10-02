@@ -1,38 +1,36 @@
--- =========================================================================
--- schema.sql - the tables your database is made of
---
--- Project 1 | SQL: From Data to Insight
--- Team:
--- Dataset:
---
--- This is a DELIVERABLE: it is how someone rebuilds your database from
--- nothing, and the tables here must match the ERD you drew.
---
--- Written for SQLite. On MySQL, add a CREATE DATABASE / USE at the top and
--- swap the types (TEXT -> VARCHAR(n), REAL -> DECIMAL, INTEGER PRIMARY KEY
--- -> INT PRIMARY KEY AUTO_INCREMENT).
--- =========================================================================
-
--- SQLite does not enforce foreign keys unless you ask it to, once per
--- connection. Without this line a broken key is accepted in silence.
 PRAGMA foreign_keys = ON;
 
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS listings;
+DROP TABLE IF EXISTS hosts;
+DROP TABLE IF EXISTS locations;
 
--- --- Lookup tables -------------------------------------------------------
--- The categorical columns you pulled out: an id and the value it stands for.
--- These have no foreign keys of their own, so they are created and loaded
--- FIRST.
+CREATE TABLE locations (
+    location_id INTEGER PRIMARY KEY,
+    neighbourhood_name TEXT NOT NULL,
+    district_name TEXT NOT NULL);
 
+CREATE TABLE hosts (
+    host_id INTEGER PRIMARY KEY,
+    host_name TEXT,
+    host_is_superhost TEXT);
 
+CREATE TABLE listings (
+    listing_id INTEGER PRIMARY KEY,
+    host_id INTEGER NOT NULL,
+    location_id INTEGER NOT NULL,
+    room_type TEXT NOT NULL,
+    accommodates INTEGER NOT NULL,
+    price REAL,
+    minimum_nights INTEGER,
+    number_of_reviews INTEGER NOT NULL,
+    estimated_occupancy_l365d REAL,
+    estimated_revenue_l365d REAL,
+    FOREIGN KEY (host_id) REFERENCES hosts(host_id),
+    FOREIGN KEY (location_id) REFERENCES locations(location_id));
 
-
--- --- Your main table -----------------------------------------------------
--- The rows you are actually analysing: the numbers you care about, plus one
--- foreign key pointing at each lookup table above. Created and loaded LAST,
--- because every key it carries has to already exist somewhere else.
-
-
-
-
--- --- Indexes (optional) --------------------------------------------------
--- Worth adding on your foreign keys if a query starts to feel slow.
+CREATE TABLE reviews (
+    review_id INTEGER PRIMARY KEY,
+    listing_id INTEGER NOT NULL,
+    review_date TEXT NOT NULL,
+    FOREIGN KEY (listing_id) REFERENCES listings(listing_id));

@@ -4,6 +4,7 @@ data/clean/*
 !data/raw/.gitkeep
 !data/clean/.gitkeep
 !data/README.md
+download_data.py
 
 # Databases are build artefacts: they are rebuilt by notebook 02.
 *.db
